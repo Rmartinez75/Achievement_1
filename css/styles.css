@@ -1,6 +1,15 @@
 body {
-  background-color: darkslategrey;
+  background-color: rgb(149, 158, 158);
   color: rgb(228, 225, 225);
   font-family: fantasy;
   text-align: center;
+}
+
+.container {
+  width: 320px;
+  padding: 10px;
+  border: 5px solid black;
+  margin: 10;
+  margin-left: auto;
+  margin-right: auto;
 }
