@@ -7,7 +7,6 @@ var pokemonRepository = (function () {
     { name: 'Charizard', height: 6, types: ['Rock', 'Ground', 'Fire'] },
   ];
 
-  //Function to validates wether item is an object. If so adds to array
   function add(item) {
     if (typeof item === 'object') {
       pokemonList.push(item);
@@ -16,12 +15,15 @@ var pokemonRepository = (function () {
     }
   }
 
-  //Funtion to return pokemonList
   function getAll() {
     return pokemonList;
   }
 
-  //Function to display the array of pokemon onto the DOM as buttons
+  return {
+    add: add,
+    getAll: getAll,
+  };
+
   function addListItem(pokemon) {
     var character = document.querySelector('.character-list');
     var listItem = document.createElement('li');
@@ -30,29 +32,8 @@ var pokemonRepository = (function () {
     button.classList.add('character-name');
     listItem.appendChild(button);
     character.appendChild(listItem);
-    clickDisplayName(button, pokemon);
   }
-
-  //Function to log the pokemon to console
-  function showDetails(pokemon) {
-    console.log(pokemon.name);
-  }
-
-  //Function to add an event listner to button which displays the pokemon on console after clicking
-  function clickDisplayName(button, pokemon) {
-    button.addEventListener('click', function (event) {
-      showDetails(pokemon);
-    });
-  }
-
-  return {
-    add: add,
-    getAll: getAll,
-    addListItem: addListItem,
-  };
 })();
 
-//forEach loop that iterates over the pokemonRepository showing what the functions can do on the DOM
-pokemonRepository.getAll().forEach(function (pokemon) {
-  pokemonRepository.addListItem(pokemon);
-});
+//Loops over the pokemonRepository with forEach method using getAll() function thats in the IIFE. Then checks if the data thats being input is an object, then writes onto DOM along with height
+pokemonRepository.getAll().forEach(function (pokemon) {});

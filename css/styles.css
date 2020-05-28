@@ -5,11 +5,60 @@ body {
   text-align: center;
 }
 
-.container {
-  width: 320px;
-  padding: 10px;
-  border: 5px solid black;
-  margin: 10;
-  margin-left: auto;
-  margin-right: auto;
+* {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.character-name {
+  font-family: inherit;
+  background-color: black;
+  border: none;
+  color: rgb(228, 225, 225);
+  padding: 15px 32px;
+  text-align: center;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+}
+
+@keyframes image-scale {
+  from {
+    transform: scale(0, 0);
+  }
+
+  to {
+    transform: scale(1, 1);
+  }
+}
+
+@media all and (max-width: 500px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media all and (min-width: 500px) and (max-width: 750px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media all and (max-width: 750px) {
+  .grid {
+    grid-gap: 10px;
+  }
+
+  .grid__item:last-child {
+    grid-column: auto / auto;
+    grid-row: auto / auto;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
 }
