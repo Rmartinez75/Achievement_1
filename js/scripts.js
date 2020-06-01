@@ -1,18 +1,14 @@
 //List of pokemon with some of their attributes using an IIFE
 var pokemonRepository = (function () {
-  var pokemonList = [
-    { name: 'Pikachu', height: 3, types: ['Flying', 'Steel', 'Electric'] },
-    { name: 'Pidgeot', height: 3, types: ['Rock', 'Ice', 'Grass'] },
-    { name: 'Mewtwo', height: 7, types: ['Ghost', 'Fighting', 'Psychic'] },
-    { name: 'Charizard', height: 6, types: ['Rock', 'Ground', 'Fire'] },
-  ];
+  var pokemonList = [];
+  var apiUrl = 'https://pokeapi.co/api/v2/pokemon/?limit=150';
 
   //Function to validates wether item is an object. If so adds to array
   function add(item) {
     if (typeof item === 'object') {
       pokemonList.push(item);
     } else {
-      document.write('This is not a Pokemon!');
+      console.log('This is not a Pokemon!');
     }
   }
 
@@ -33,9 +29,48 @@ var pokemonRepository = (function () {
     clickDisplayName(button, pokemon);
   }
 
+  //Function to retrieve info from API then load into pokemonList array
+  function loadList() {
+    return fetch(apiUrl)
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (json) {
+        json.results.forEach(function (item) {
+          var pokemon = {
+            name: item.name,
+            detailsUrl: item.url,
+          };
+          add(pokemon);
+        });
+      })
+      .catch(function (e) {
+        console.error(e);
+      });
+  }
+
+  //Function breaks down details in the pokemonList to display specific things
+  function loadDetails(item) {
+    var url = item.detailsUrl;
+    return fetch(url)
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (details) {
+        item.imageUrl = details.sprites.front_default;
+        item.height = details.height;
+        item.types = details.types;
+      })
+      .catch(function (e) {
+        console.error(e);
+      });
+  }
+
   //Function to log the pokemon to console
   function showDetails(pokemon) {
-    console.log(pokemon.name);
+    loadDetails(pokemon).then(function () {
+      console.log(pokemon);
+    });
   }
 
   //Function to add an event listner to button which displays the pokemon on console after clicking
@@ -45,14 +80,19 @@ var pokemonRepository = (function () {
     });
   }
 
+  //Returns all functions
   return {
     add: add,
     getAll: getAll,
     addListItem: addListItem,
+    loadList: loadList,
+    loadDetails: loadDetails,
   };
 })();
 
-//forEach loop that iterates over the pokemonRepository showing what the functions can do on the DOM
-pokemonRepository.getAll().forEach(function (pokemon) {
-  pokemonRepository.addListItem(pokemon);
+//Function that uses forEach loop to iterate over the pokemonRepository and display the pokemon list onto DOM then when a name is clicked it logs details to console
+pokemonRepository.loadList().then(function () {
+  pokemonRepository.getAll().forEach(function (pokemon) {
+    pokemonRepository.addListItem(pokemon);
+  });
 });
