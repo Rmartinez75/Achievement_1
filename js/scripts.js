@@ -29,6 +29,13 @@ var pokemonRepository = (function () {
     clickDisplayName(button, pokemon);
   }
 
+  //Function to log the pokemon to console
+  function showDetails(pokemon) {
+    loadDetails(pokemon).then(function () {
+      showModal(pokemon);
+    });
+  }
+
   //Function to retrieve info from API then load into pokemonList array
   function loadList() {
     return fetch(apiUrl)
@@ -59,19 +66,103 @@ var pokemonRepository = (function () {
       .then(function (details) {
         item.imageUrl = details.sprites.front_default;
         item.height = details.height;
-        item.types = details.types;
+        item.types = [];
+        //Iterates through types array and pushes to item.types array
+        for (var i = 0; i < details.types.length; i++) {
+          item.types.push(details.types[i].type.name);
+        }
+
+        //Iterates through abilities array and pushes to item.abilities array
+        item.abilities = [];
+        for (var i = 0; i < details.abilities.length; i++) {
+          item.abilities.push(details.abilities[i].ability.name);
+        }
+
+        item.weight = details.weight;
       })
       .catch(function (e) {
         console.error(e);
       });
   }
 
-  //Function to log the pokemon to console
-  function showDetails(pokemon) {
-    loadDetails(pokemon).then(function () {
-      console.log(pokemon);
-    });
+  //Creates the Modal and all funcionality
+  function showModal(pokemon) {
+    var $modalContainer = document.querySelector('#modal-container');
+    $modalContainer.innerHTML = '';
+
+    //Creates div tag in DOM
+    var modal = document.createElement('div');
+    modal.classList.add('modal');
+
+    //Creates the close button and gives it functionality
+    var closeButtonElement = document.createElement('button');
+    closeButtonElement.classList.add('modal-close');
+    closeButtonElement.innerText = 'close';
+    closeButtonElement.addEventListener('click', hideModal);
+
+    //Creates h1 tag in DOM and inputs pokemon name as text
+    var nameElement = document.createElement('h1');
+    nameElement.innerText = pokemon.name;
+
+    //Creates img tag in DOM and puts in pokemon img
+    var imageElement = document.createElement('img');
+    imageElement.classList.add('modal-img');
+    imageElement.setAttribute('src', pokemon.imageUrl);
+
+    //Creates a paragraph tag in DOM for the height
+    var heightElement = document.createElement('p');
+    heightElement.innerText = 'Height: ' + pokemon.height;
+
+    //Creates a paragraph tag in DOM for the weight
+    var weightElement = document.createElement('p');
+    weightElement.innerText = 'Weight: ' + pokemon.weight;
+
+    //Creates a paragraph tag in DOM for the type
+    var typesElement = document.createElement('p');
+    typesElement.innerText = 'Types: ' + pokemon.types;
+
+    //Creates a paragraph tag in DOM for the abilities
+    var abilitiesElement = document.createElement('p');
+    abilitiesElement.innerText = 'Abilities: ' + pokemon.abilities;
+
+    //Puts elemenst into div
+    modal.appendChild(closeButtonElement);
+    modal.appendChild(nameElement);
+    modal.appendChild(imageElement);
+    modal.appendChild(heightElement);
+    modal.appendChild(weightElement);
+    modal.appendChild(typesElement);
+    modal.appendChild(abilitiesElement);
+    $modalContainer.appendChild(modal);
+    //Adds class to show the modal
+    $modalContainer.classList.add('is-visible');
   }
+
+  //Hides modal when click close button
+  function hideModal() {
+    var $modalContainer = document.querySelector('#modal-container');
+    $modalContainer.classList.remove('is-visible');
+  }
+
+  //Hides modal when click ESC
+  window.addEventListener('keydown', (e) => {
+    var $modalContainer = document.querySelector('#modal-container');
+    if (
+      e.key === 'Escape' &&
+      $modalContainer.classList.contains('is-visible')
+    ) {
+      hideModal();
+    }
+  });
+
+  //Hides modal if clicked outside of it
+  var $modalContainer = document.querySelector('#modal-container');
+  $modalContainer.addEventListener('click', (e) => {
+    var target = e.target;
+    if (target === $modalContainer) {
+      hideModal();
+    }
+  });
 
   //Function to add an event listner to button which displays the pokemon on console after clicking
   function clickDisplayName(button, pokemon) {
